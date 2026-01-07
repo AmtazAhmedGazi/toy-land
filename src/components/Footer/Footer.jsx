@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="footer sm:footer-horizontal bg-[#263950] text-white p-10">
       <aside>
-        <a className="text-3xl text-white font-bold mb-1">ToyTopia</a>
+        <a className="text-3xl text-white font-bold mb-1">Toy Land</a>
         <Link
           to="/aboutUs"
           className="text-base-100 opacity-90 text-sm hover:text-white transition-all duration-150 ease-in-out hover:opacity-100 leading-1 cursor-pointer"

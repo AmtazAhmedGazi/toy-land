@@ -11,7 +11,7 @@ const NewsletterSignup = () => {
     <div className=" from-[#F0FFF4] to-[#E6FFFA] py-16 px-5 md:px-10 lg:px-20 flex justify-center items-center">
       <div className="max-w-3xl w-full bg-white shadow-lg rounded-2xl p-8 md:p-12 text-center border border-gray-100">
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
-          Stay Connected With ToyTopia
+          Stay Connected With Toy Land
         </h2>
         <p className="text-gray-600 mb-8">
           Join our newsletter to get the latest updates on new toys, exclusive
