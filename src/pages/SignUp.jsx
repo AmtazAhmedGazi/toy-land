@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import MyContainer from "../components/MyContainer/MyContainer";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link } from "react-router";
-import { auth } from "../firebase/firebase.config";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { sendEmailVerification, updateProfile } from "firebase/auth";
 import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const { createUserWithEmailAndPasswordFunc } = useContext(AuthContext);
 
   const handleSignup = (e) => {
     e.preventDefault();
+    const displayName = e.target.name?.value;
+    const photoURL = e.target.photo?.value;
     const email = e.target.email?.value;
     const password = e.target.password?.value;
 
@@ -25,10 +28,26 @@ const SignUp = () => {
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
+    createUserWithEmailAndPasswordFunc(email, password)
       .then((res) => {
-        console.log(res);
-        toast.success("SignUp Successful");
+        updateProfile(res.user, {
+          displayName,
+          photoURL,
+        })
+          .then(() => {
+            sendEmailVerification(res.user)
+              .then(() => {
+                toast.success(
+                  "SignUp Successful. Check your mail to validate your account. "
+                );
+              })
+              .catch((e) => {
+                toast.error(e.code);
+              });
+          })
+          .catch((e) => {
+            toast.error(e.code);
+          });
       })
       .catch((e) => {
         toast.error(e.code);
@@ -47,6 +66,22 @@ const SignUp = () => {
           </h2>
           <div className="card-body">
             <fieldset className="fieldset">
+              <label className="label">Name</label>
+              <input
+                name="name"
+                type="text"
+                className="input"
+                placeholder="Name"
+                required
+              />
+              <label className="label">Photo</label>
+              <input
+                name="photo"
+                type="text"
+                className="input"
+                placeholder="Your photo url here..."
+                required
+              />
               <label className="label">Email</label>
               <input
                 name="email"

@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import "./Navbar.css";
 import MyContainer from "../MyContainer/MyContainer";
 import MyLink from "../MyLink/MyLink";
 import { Link } from "react-router";
+import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
+  const result = useContext(AuthContext);
+
   const links = (
     <>
       <MyLink to="/">
@@ -19,6 +22,7 @@ const Navbar = () => {
       </MyLink>
     </>
   );
+
   return (
     <MyContainer className="navbar shadow-sm">
       <div className="navbar-start">

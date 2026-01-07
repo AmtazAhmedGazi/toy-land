@@ -1,36 +1,38 @@
-import React, { useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router";
 import MyContainer from "../components/MyContainer/MyContainer";
 import { auth } from "../firebase/firebase.config";
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
+import { sendPasswordResetEmail, signOut } from "firebase/auth";
 import { toast } from "react-toastify";
-import { GoogleAuthProvider } from "firebase/auth";
 
-const googleProvider = new GoogleAuthProvider();
+import { AuthContext } from "../context/AuthContext";
 
 const SignIn = () => {
   const [user, setuser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const emailRef = useRef(null);
+  const { signInWithEmailAndPasswordFunc, signInWithPopupFunc } =
+    useContext(AuthContext);
+
   const handleSignIn = (e) => {
     e.preventDefault();
 
     const email = e.target.email?.value;
     const password = e.target.password?.value;
 
-    signInWithEmailAndPassword(auth, email, password).then((res) => {
+    signInWithEmailAndPasswordFunc(email, password).then((res) => {
+      if (!res.user?.emailVerified) {
+        toast.error("Your email is not verified.");
+        return;
+      }
       setuser(res.user);
       toast.success("Sign In Successful").catch((e) => {
         toast.error(e.code);
       });
     });
   };
-  console.log(user);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -44,10 +46,19 @@ const SignIn = () => {
   };
 
   const handleGoogleLogin = () => {
-    signInWithPopup(auth, googleProvider).then((res) => {
+    signInWithPopupFunc().then((res) => {
       setuser(res.user);
       toast.success("Sign In Successful").catch((e) => {
         toast.error(e.code);
+      });
+    });
+  };
+
+  const handleForgetPassword = () => {
+    const email = emailRef.current.value;
+    sendPasswordResetEmail(auth, email).then(() => {
+      toast.success(`Password Reset Mail sent to ${email} `).catch((e) => {
+        toast.error(e.message);
       });
     });
   };
@@ -85,6 +96,7 @@ const SignIn = () => {
                 <input
                   name="email"
                   type="email"
+                  ref={emailRef}
                   className="input"
                   placeholder="Email"
                   required
@@ -117,7 +129,11 @@ const SignIn = () => {
                   )}
                 </div>
                 <div>
-                  <button type="button" className="link link-hover font-medium">
+                  <button
+                    type="button"
+                    className="link link-hover cursor-pointer font-medium"
+                    onClick={handleForgetPassword}
+                  >
                     Forgot password?
                   </button>
                 </div>
