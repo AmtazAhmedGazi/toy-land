@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, Navigate, useLocation, useNavigate } from "react-router";
 import MyContainer from "../components/MyContainer/MyContainer";
 import { toast } from "react-toastify";
 
@@ -16,11 +16,16 @@ const SignIn = () => {
     sendPasswordResetEmailFunc,
     setUser,
     setLoading,
+    user,
   } = useContext(AuthContext);
 
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state || "/";
+
+  if (user) {
+    return <Navigate to={"/"}></Navigate>;
+  }
 
   const handleSignIn = (e) => {
     e.preventDefault();
