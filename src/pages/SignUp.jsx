@@ -35,8 +35,6 @@ const SignUp = () => {
       });
   };
 
-  const handleGoogleLogin = () => {};
-
   return (
     <MyContainer>
       <div className="min-h-[calc(100vh-72px)] flex justify-center items-center p-5 ">
@@ -102,13 +100,6 @@ const SignUp = () => {
                   </Link>
                 </p>
               </div>
-              <button
-                onClick={handleGoogleLogin}
-                className="btn mt-4 border-[#47698F] bg-transparent flex   hover:border-red-500 hover:scale-105 transition-all duration-200 ease-in-out"
-              >
-                <FcGoogle size={24}></FcGoogle>
-                <p>Sign In with Google</p>
-              </button>
             </fieldset>
           </div>
         </form>
