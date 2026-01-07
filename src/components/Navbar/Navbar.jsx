@@ -5,26 +5,47 @@ import MyContainer from "../MyContainer/MyContainer";
 import MyLink from "../MyLink/MyLink";
 import { Link } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
+import { ClockLoader } from "react-spinners";
 
 const Navbar = () => {
-  const result = useContext(AuthContext);
+  const { user, setUser, signOutFunc, loading } = useContext(AuthContext);
+
+  const handleSignOut = () => {
+    signOutFunc()
+      .then(() => {
+        toast.success("Sign Out Successful");
+        setUser(null);
+      })
+      .catch((e) => {
+        toast.error(e.code);
+      });
+  };
 
   const links = (
     <>
-      <MyLink to="/">
-        <li className="m-2 ">Home</li>
-      </MyLink>
-      <MyLink to="/allToys">
-        <li className="m-2 ">All Toys</li>
-      </MyLink>
-      <MyLink to="/aboutUs">
-        <li className="m-2 ">About Us</li>
-      </MyLink>
+      <li className="m-2 ">
+        <MyLink to="/">Home</MyLink>
+      </li>
+
+      <li className="m-2 ">
+        <MyLink to="/allToys">All Toys</MyLink>
+      </li>
+
+      <li className="m-2 ">
+        <MyLink to="/aboutUs">About Us</MyLink>
+      </li>
+
+      {user && (
+        <li className="m-2 ">
+          <MyLink to="/profile">Profile</MyLink>
+        </li>
+      )}
     </>
   );
 
   return (
-    <MyContainer className="navbar shadow-sm">
+    <MyContainer className="navbar shadow-xs">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -62,9 +83,50 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{links}</ul>
       </div>
       <div className="navbar-end">
-        <Link to="/signIn">
-          <button className="btn bg-[#47698F] text-white">Sign In</button>
-        </Link>
+        {loading ? (
+          <ClockLoader color="#e45321" />
+        ) : user ? (
+          <div className="flex">
+            {/* change popover-1 and --anchor-1 names. Use unique names for each dropdown */}
+            {/* For TSX uncomment the commented types below */}
+            <button
+              popoverTarget="popover-1"
+              style={{ anchorName: "--anchor-1" } /* as React.CSSProperties */}
+            >
+              <img
+                src={user?.photoURL || "https://via.placeholder.com/88"}
+                className="h-13 w-13 rounded-full mr-10"
+                alt=""
+              />
+            </button>
+
+            <div
+              className="dropdown menu w-52 rounded-box bg-base-100 shadow-sm "
+              popover="auto"
+              id="popover-1"
+              style={
+                { positionAnchor: "--anchor-1" } /* as React.CSSProperties */
+              }
+            >
+              <h2 className="text-lg font-semibold text-center mt-2">
+                {user?.displayName}
+              </h2>
+              <p className="text-center">{user?.email}</p>
+              <button
+                onClick={handleSignOut}
+                className="btn bg-red-600 hover:bg-red-900 text-white w-full"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <button className="btn bg-[#47698F] text-white">
+              <Link to="/signIn">Sign In</Link>
+            </button>
+          </div>
+        )}
       </div>
     </MyContainer>
   );

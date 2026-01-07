@@ -2,14 +2,21 @@ import React, { useContext, useState } from "react";
 import MyContainer from "../components/MyContainer/MyContainer";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { Link } from "react-router";
-import { sendEmailVerification, updateProfile } from "firebase/auth";
+import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { createUserWithEmailAndPasswordFunc } = useContext(AuthContext);
+  const {
+    createUserWithEmailAndPasswordFunc,
+    updateProfileFunc,
+    sendEmailVerificationFunc,
+    setLoading,
+    setUser,
+    signoutUserFunc,
+  } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSignup = (e) => {
     e.preventDefault();
@@ -29,17 +36,19 @@ const SignUp = () => {
     }
 
     createUserWithEmailAndPasswordFunc(email, password)
-      .then((res) => {
-        updateProfile(res.user, {
-          displayName,
-          photoURL,
-        })
+      .then(() => {
+        updateProfileFunc(displayName, photoURL)
           .then(() => {
-            sendEmailVerification(res.user)
+            sendEmailVerificationFunc()
               .then(() => {
-                toast.success(
-                  "SignUp Successful. Check your mail to validate your account. "
-                );
+                setLoading(false);
+                signoutUserFunc().then(() => {
+                  toast.success(
+                    "Account created Successfully. Check your mail to validate your account. "
+                  );
+                  setUser(null);
+                  navigate("/signIn");
+                });
               })
               .catch((e) => {
                 toast.error(e.code);
