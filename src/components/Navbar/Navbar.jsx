@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 
-import "./Navbar.css";
 import MyContainer from "../MyContainer/MyContainer";
 import MyLink from "../MyLink/MyLink";
 import { Link } from "react-router";
